@@ -6,40 +6,30 @@
 <title>성균관대 오늘의 학식</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f3; color: #1a1a1a; min-height: 100vh; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0e0e0e; color: #e8e6e1; min-height: 100vh; }
   .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
-
-  .header { padding-bottom: 16px; border-bottom: 1px solid #e0ddd6; margin-bottom: 20px; }
-  .header h1 { font-size: 20px; font-weight: 600; }
-  .date { font-size: 13px; color: #888; margin-top: 4px; }
-
+  .header { padding-bottom: 16px; border-bottom: 1px solid #2a2a2a; margin-bottom: 20px; }
+  .header h1 { font-size: 20px; font-weight: 600; color: #f0ede8; }
+  .date { font-size: 13px; color: #666; margin-top: 4px; }
   .tabs { display: flex; gap: 6px; margin-bottom: 20px; }
-  .tab { font-size: 13px; padding: 6px 18px; border-radius: 20px; border: 1px solid #ddd; color: #666; cursor: pointer; background: #fff; transition: all 0.15s; }
-  .tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; font-weight: 500; }
-  .tab:hover:not(.active) { background: #f0f0ee; }
-
+  .tab { font-size: 13px; padding: 6px 18px; border-radius: 20px; border: 1px solid #2e2e2e; color: #888; cursor: pointer; background: #1a1a1a; transition: all 0.15s; }
+  .tab.active { background: #e8e6e1; color: #0e0e0e; border-color: #e8e6e1; font-weight: 500; }
+  .tab:hover:not(.active) { background: #222; color: #bbb; }
   .section { display: none; }
   .section.active { display: block; }
-
-  .restaurant-block { background: #fff; border: 1px solid #e8e5de; border-radius: 14px; padding: 16px; margin-bottom: 10px; }
-  .restaurant-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .restaurant-block { background: #161616; border: 1px solid #252525; border-radius: 14px; padding: 16px; margin-bottom: 10px; }
+  .restaurant-name { font-size: 14px; font-weight: 600; color: #f0ede8; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
-  .dot.closed { background: #ccc; }
-
+  .dot.closed { background: #444; }
   .stalls { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-  .stall { background: #f8f7f4; border-radius: 10px; padding: 11px 13px; }
-  .stall-name { font-size: 11px; font-weight: 600; color: #999; letter-spacing: 0.04em; margin-bottom: 5px; text-transform: uppercase; }
-  .menu-main { font-size: 13px; font-weight: 600; color: #1a1a1a; line-height: 1.5; }
-  .menu-sub { font-size: 12px; color: #666; line-height: 1.7; margin-top: 2px; }
-  .divider { border: none; border-top: 1px solid #e8e5de; margin: 7px 0; }
-  .menu-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.03em; margin-bottom: 3px; }
-  .price { font-size: 11px; color: #aaa; margin-top: 4px; }
-
-  .simple-menu { display: flex; flex-direction: column; gap: 2px; }
-
-  .closed-text { font-size: 13px; color: #bbb; font-style: italic; }
-
-  .empty-msg { text-align: center; padding: 48px 0; color: #bbb; font-size: 14px; }
+  .stall { background: #1e1e1e; border-radius: 10px; padding: 11px 13px; }
+  .stall-name { font-size: 11px; font-weight: 600; color: #555; letter-spacing: 0.04em; margin-bottom: 5px; }
+  .menu-main { font-size: 13px; font-weight: 600; color: #e8e6e1; line-height: 1.5; }
+  .menu-sub { font-size: 12px; color: #888; line-height: 1.7; margin-top: 2px; }
+  .divider { border: none; border-top: 1px solid #2a2a2a; margin: 7px 0; }
+  .menu-label { font-size: 11px; font-weight: 600; color: #555; letter-spacing: 0.03em; margin-bottom: 3px; }
+  .closed-text { font-size: 13px; color: #444; font-style: italic; }
+  .empty-msg { text-align: center; padding: 48px 0; color: #444; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -48,13 +38,11 @@
     <h1>오늘의 학식</h1>
     <div class="date" id="date-display"></div>
   </div>
-
   <div class="tabs">
     <button class="tab" onclick="switchTab('breakfast')">조식</button>
     <button class="tab active" onclick="switchTab('lunch')">중식</button>
     <button class="tab" onclick="switchTab('dinner')">석식</button>
   </div>
-
   <div id="breakfast" class="section"></div>
   <div id="lunch" class="section active"></div>
   <div id="dinner" class="section"></div>
@@ -71,78 +59,65 @@ function switchTab(meal) {
   document.getElementById(meal).classList.add("active");
 }
 
-function menuList(items) {
+function menuCard(items) {
   if (!items || items.length === 0) return '<span class="closed-text">정보 없음</span>';
   const [main, ...rest] = items;
   return `<div class="menu-main">${main}</div>${rest.length ? `<div class="menu-sub">${rest.join("<br>")}</div>` : ""}`;
 }
 
-function renderHaengdan(data, meal) {
+function renderHaengdan(rdata, meal) {
   if (meal === "breakfast") {
-    const items = data.breakfast || [];
-    if (!items.length) return '<div class="closed-text">미운영</div>';
-    return `<div class="simple-menu">${menuList(items)}</div>`;
+    const items = rdata.breakfast || [];
+    if (!items.length) return '<span class="closed-text">미운영</span>';
+    return menuCard(items);
   }
-  const stalls = data.lunch || [];
-  if (!stalls.length) return '<div class="closed-text">정보 없음</div>';
+  if (meal === "dinner") return '<span class="closed-text">미운영</span>';
+  const stalls = rdata.lunch || [];
+  if (!stalls.length) return '<span class="closed-text">정보 없음</span>';
   return `<div class="stalls">${stalls.map(s => `
     <div class="stall">
       <div class="stall-name">${s.name}</div>
-      ${menuList(s.menu)}
+      ${menuCard(s.menu)}
     </div>`).join("")}</div>`;
 }
 
-function renderSimple(data, meal) {
-  const items = data[meal] || [];
-  if (!items.length) return '<div class="closed-text">미운영</div>';
-  return `<div class="simple-menu">${menuList(items)}</div>`;
+function renderSimple(rdata, meal) {
+  const items = rdata[meal] || [];
+  if (!items.length) return '<span class="closed-text">미운영</span>';
+  return menuCard(items);
 }
 
 function renderDorm(dorm, meal) {
   const data = dorm[meal] || {};
-  const entries = Object.entries(data);
-  if (!entries.length) return "";
+  if (!Object.keys(data).length) return "";
 
   let html = `<div class="restaurant-block"><div class="restaurant-name"><span class="dot"></span>기숙사 (봉룡학사)</div><div class="stalls">`;
 
-  const sinkan = {};
-  const jigan = {};
-  const takeout = {};
+  if (meal === "breakfast") {
+    const items = data["Take-out(신관)"] || [];
+    html += `<div class="stall"><div class="stall-name">신관 Take-out</div>${menuCard(items)}</div>`;
+  } else if (meal === "lunch") {
+    const sinkanMenu = data["신관"] || [];
+    const commonMenu = data["공통"] || [];
+    const takeoutItems = data["Take-out(공통)"] || [];
 
-  entries.forEach(([name, menu]) => {
-    if (name.includes("Take-out") || name.includes("테이크아웃")) {
-      takeout[name] = menu;
-    } else if (name === "신관") {
-      sinkan["신관"] = menu;
-    } else if (name === "공통") {
-      jigan["지관"] = menu;
-      sinkan["공통"] = menu;
-    }
-  });
+    html += `<div class="stall"><div class="stall-name">신관</div>`;
+    if (commonMenu.length) html += `<div class="menu-label">메뉴 A</div>${menuCard(commonMenu)}`;
+    if (sinkanMenu.length) html += `<div class="divider"></div><div class="menu-label">메뉴 B</div>${menuCard(sinkanMenu)}`;
+    if (takeoutItems.length) html += `<div class="divider"></div><div class="menu-label">Take-out</div><div class="menu-sub">${takeoutItems.join("<br>")}</div>`;
+    html += `</div>`;
 
-  // 신관 카드
-  const sinkanMenu = sinkan["신관"] || [];
-  const commonMenu = sinkan["공통"] || [];
-  const takeoutItems = Object.values(takeout).flat();
-
-  html += `<div class="stall"><div class="stall-name">신관</div>`;
-  if (sinkanMenu.length && commonMenu.length) {
-    html += `<div class="menu-label">메뉴 A</div>${menuList(commonMenu)}<div class="divider"></div><div class="menu-label">메뉴 B</div>${menuList(sinkanMenu)}`;
-  } else {
-    html += menuList(commonMenu.length ? commonMenu : sinkanMenu);
+    html += `<div class="stall"><div class="stall-name">지관</div>`;
+    if (commonMenu.length) html += menuCard(commonMenu);
+    if (takeoutItems.length) html += `<div class="divider"></div><div class="menu-label">Take-out</div><div class="menu-sub">${takeoutItems.join("<br>")}</div>`;
+    html += `</div>`;
+  } else if (meal === "dinner") {
+    const commonMenu = data["공통"] || [];
+    const takeoutItems = data["Take-out(공통)"] || [];
+    html += `<div class="stall"><div class="stall-name">공통</div>${menuCard(commonMenu)}`;
+    if (takeoutItems.length) html += `<div class="divider"></div><div class="menu-label">Take-out</div><div class="menu-sub">${takeoutItems.join("<br>")}</div>`;
+    html += `</div>`;
   }
-  if (takeoutItems.length) {
-    html += `<div class="divider"></div><div class="menu-label">Take-out</div><div class="menu-sub">${takeoutItems.join("<br>")}</div>`;
-  }
-  html += `</div>`;
-
-  // 지관 카드
-  const jikanMenu = jigan["지관"] || commonMenu;
-  html += `<div class="stall"><div class="stall-name">지관</div>${menuList(jikanMenu)}`;
-  if (takeoutItems.length) {
-    html += `<div class="divider"></div><div class="menu-label">Take-out</div><div class="menu-sub">${takeoutItems.join("<br>")}</div>`;
-  }
-  html += `</div>`;
 
   html += `</div></div>`;
   return html;
@@ -150,8 +125,8 @@ function renderDorm(dorm, meal) {
 
 async function init() {
   const today = new Date();
-  const dateStr = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일 ${WEEKDAYS[today.getDay()]}요일`;
-  document.getElementById("date-display").textContent = dateStr;
+  document.getElementById("date-display").textContent =
+    `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일 ${WEEKDAYS[today.getDay()]}요일`;
 
   let data;
   try {
@@ -164,31 +139,18 @@ async function init() {
     return;
   }
 
-  const meals = ["breakfast", "lunch", "dinner"];
-  meals.forEach(meal => {
+  ["breakfast", "lunch", "dinner"].forEach(meal => {
     let html = "";
-
     Object.entries(data.restaurants).forEach(([name, rdata]) => {
       if (meal === "breakfast" && name !== "행단골") return;
-
-      let content = "";
-      if (rdata.type === "haengdan") {
-        content = renderHaengdan(rdata, meal);
-      } else {
-        content = renderSimple(rdata, meal);
-      }
-
-      const isEmpty = content.includes("미운영") || content.includes("정보 없음");
-      const dotClass = isEmpty ? "dot closed" : "dot";
-
+      const content = rdata.type === "haengdan" ? renderHaengdan(rdata, meal) : renderSimple(rdata, meal);
+      const isClosed = content.includes("미운영") || content.includes("정보 없음");
       html += `<div class="restaurant-block">
-        <div class="restaurant-name"><span class="${dotClass}"></span>${name}</div>
+        <div class="restaurant-name"><span class="dot${isClosed ? " closed" : ""}"></span>${name}</div>
         ${content}
       </div>`;
     });
-
     html += renderDorm(data.dorm, meal);
-
     document.getElementById(meal).innerHTML = html || '<div class="empty-msg">메뉴 정보가 없습니다.</div>';
   });
 }
