@@ -1,11 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import date
+from menu_date import korean_today
 import json
 import re
 
-TODAY = date.today().strftime("%Y-%m-%d")
-WEEKDAY = ["월", "화", "수", "목", "금", "토", "일"][date.today().weekday()]
+MENU_DAY = korean_today()
+TODAY = MENU_DAY.isoformat()
+WEEKDAY = ["월", "화", "수", "목", "금", "토", "일"][MENU_DAY.weekday()]
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -183,3 +184,4 @@ if __name__ == "__main__":
         json.dump(menu, f, ensure_ascii=False, indent=2)
     print(f"\n✅ menu.json 저장 완료!")
     print(json.dumps(menu, ensure_ascii=False, indent=2)[:1000])
+
