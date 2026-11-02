@@ -11,6 +11,7 @@
   .header { padding-bottom: 16px; border-bottom: 1px solid #2a2a2a; margin-bottom: 20px; }
   .header h1 { font-size: 20px; font-weight: 600; color: #f0ede8; }
   .date { font-size: 13px; color: #666; margin-top: 4px; }
+  .date.stale { color: #f0b86e; }
   .tabs { display: flex; gap: 6px; margin-bottom: 20px; }
   .tab { font-size: 13px; padding: 6px 18px; border-radius: 20px; border: 1px solid #2e2e2e; color: #888; cursor: pointer; background: #1a1a1a; transition: all 0.15s; }
   .tab.active { background: #e8e6e1; color: #0e0e0e; border-color: #e8e6e1; font-weight: 500; }
@@ -36,7 +37,7 @@
 <div class="container">
   <div class="header">
     <h1>오늘의 학식</h1>
-    <div class="date" id="date-display"></div>
+    <div class="date" id="date-display" role="status" aria-live="polite"></div>
   </div>
   <div class="tabs">
     <button class="tab" onclick="switchTab('breakfast')">조식</button>
@@ -123,21 +124,43 @@ function renderDorm(dorm, meal) {
   return html;
 }
 
+function menuDateStatus(menuDate, now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(now);
+  const part = type => parts.find(p => p.type === type).value;
+  const today = `${part("year")}-${part("month")}-${part("day")}`;
+  const parsed = typeof menuDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(menuDate)
+    ? new Date(menuDate + "T00:00:00Z") : new Date(NaN);
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== menuDate) {
+    return { text: "메뉴 날짜를 확인할 수 없습니다 · 오늘 메뉴인지 확인해 주세요.", stale: true };
+  }
+  const label = `메뉴 기준: ${parsed.getUTCFullYear()}년 ${parsed.getUTCMonth()+1}월 ${parsed.getUTCDate()}일 ${WEEKDAYS[parsed.getUTCDay()]}요일`;
+  const warning = menuDate < today ? " · 이전 메뉴입니다. 오늘 메뉴가 아직 갱신되지 않았습니다."
+    : menuDate > today ? " · 오늘과 다른 날짜의 메뉴입니다." : "";
+  return { text: label + warning, stale: menuDate !== today };
+}
+
 async function init() {
-  const today = new Date();
-  document.getElementById("date-display").textContent =
-    `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일 ${WEEKDAYS[today.getDay()]}요일`;
+  const dateDisplay = document.getElementById("date-display");
+  dateDisplay.textContent = "메뉴 날짜 확인 중…";
 
   let data;
   try {
-    const res = await fetch("menu.json");
+    const res = await fetch("menu.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("Menu request failed");
     data = await res.json();
   } catch(e) {
+    dateDisplay.textContent = "메뉴 날짜를 확인할 수 없습니다.";
     ["breakfast","lunch","dinner"].forEach(m => {
       document.getElementById(m).innerHTML = '<div class="empty-msg">메뉴 데이터를 불러올 수 없습니다.</div>';
     });
     return;
   }
+
+  const status = menuDateStatus(data.date);
+  dateDisplay.textContent = status.text;
+  dateDisplay.classList.toggle("stale", status.stale);
 
   ["breakfast", "lunch", "dinner"].forEach(meal => {
     let html = "";
@@ -159,3 +182,4 @@ init();
 </script>
 </body>
 </html>
+

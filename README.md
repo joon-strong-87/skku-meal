@@ -25,3 +25,17 @@ python crawler.py
 
 ## 배포
 GitHub Pages 사용. `index.html`이 `menu.json`을 fetch해서 렌더링합니다.
+
+
+## 날짜 및 검증
+
+메뉴 날짜와 요일은 실행 서버의 시간대와 무관하게 `Asia/Seoul` 기준입니다.
+화면에는 실제 메뉴 데이터의 날짜를 표시하며, 한국시간 오늘과 다르면 경고합니다.
+날짜가 없거나 잘못된 경우에도 오늘 메뉴라고 표시하지 않습니다.
+
+회귀 테스트 (Python 의존성 설치 후, Node.js 필요):
+
+```bash
+python -m unittest discover -s tests -v
+node tests/test_frontend.cjs
+```
