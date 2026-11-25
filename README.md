@@ -23,6 +23,12 @@ pip install requests beautifulsoup4
 python crawler.py
 ```
 
+## 실패 대비
+
+한 사이트가 응답하지 않아도 전체 업데이트가 멈추지 않습니다. 요청은 기본 25초 타임아웃으로 3회까지 재시도(백오프 2초, 4초)하고, 그래도 실패한 식단은 같은 날짜의 기존 `menu.json` 값이 있으면 그대로 쓰고 없으면 빈 값으로 두어 나머지 식당 갱신과 배포는 정상 진행합니다. 모든 식단이 실패하면 기존 `menu.json`을 덮어쓰지 않고 실패로 종료합니다.
+
+타임아웃·재시도 횟수·백오프는 `CRAWL_TIMEOUT`, `CRAWL_ATTEMPTS`, `CRAWL_BACKOFF` 환경변수로 조정합니다.
+
 ## 배포
 GitHub Pages 사용. `index.html`이 `menu.json`을 fetch해서 렌더링합니다.
 

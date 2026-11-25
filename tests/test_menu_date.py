@@ -35,7 +35,7 @@ class CrawlerIntegrationTests(unittest.TestCase):
         self.assertEqual(crawler.TODAY, "2026-11-02")
         self.assertEqual(crawler.WEEKDAY, "월")
         self.assertEqual(crawler.extract_today_menu("[일]old\n[월]correct"), ["correct"])
-        with patch.object(crawler.requests, "get", return_value=Mock(text="<html></html>")) as get:
+        with patch.object(crawler.requests, "get", return_value=Mock(text='<html><div id="foodlist01"></div></html>')) as get:
             crawler.fetch_dorm(1)
             self.assertEqual(get.call_args.kwargs["params"]["date"], "2026-11-02")
 
